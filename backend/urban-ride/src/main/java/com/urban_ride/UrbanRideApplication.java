@@ -1,4 +1,4 @@
-package com.urbanride.urban_ride;
+package com.urban_ride;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

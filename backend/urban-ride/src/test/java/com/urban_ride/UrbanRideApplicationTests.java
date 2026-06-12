@@ -1,4 +1,4 @@
-package com.urbanride.urban_ride;
+package com.urban_ride;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
