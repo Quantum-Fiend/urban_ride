@@ -1,0 +1,217 @@
+RideSphere/
+│
+├── README.md
+├── .gitignore
+├── docker-compose.yml
+├── Makefile
+│
+├── docs/
+│   ├── architecture/
+│   │   ├── hld.md
+│   │   ├── lld.md
+│   │   ├── c4-context.md
+│   │   ├── c4-container.md
+│   │   ├── sequence-diagrams/
+│   │   │   ├── ride-booking.md
+│   │   │   ├── payment-flow.md
+│   │   │   └── driver-matching.md
+│   │   └── decisions/
+│   │       ├── tech-decisions.md
+│   │       └── tradeoffs.md
+│   │
+│   ├── api/
+│   │   ├── openapi.yaml
+│   │   ├── postman-collection.json
+│   │   └── api-contracts.md
+│   │
+│   ├── database/
+│   │   ├── erd.png
+│   │   ├── schema.sql
+│   │   ├── migrations-notes.md
+│   │   └── indexing-strategy.md
+│   │
+│   └── runbooks/
+│       ├── local-setup.md
+│       ├── deployment.md
+│       ├── troubleshooting.md
+│       └── incident-response.md
+│
+├── backend/
+│   │
+│   ├── ridesphere-backend/   (MODULAR MONOLITH FIRST)
+│   │   ├── src/
+│   │   │   ├── main/
+│   │   │   │   ├── java/com/ridesphere/
+│   │   │   │   │
+│   │   │   │   │   ├── config/
+│   │   │   │   │   ├── common/
+│   │   │   │   │   │   ├── exception/
+│   │   │   │   │   │   ├── response/
+│   │   │   │   │   │   ├── utils/
+│   │   │   │   │   │   ├── security/
+│   │   │   │   │   │   └── events/
+│   │   │   │   │   │
+│   │   │   │   │   ├── auth/
+│   │   │   │   │   │   ├── controller/
+│   │   │   │   │   │   ├── service/
+│   │   │   │   │   │   ├── repository/
+│   │   │   │   │   │   ├── model/
+│   │   │   │   │   │   └── dto/
+│   │   │   │   │   │
+│   │   │   │   │   ├── user/
+│   │   │   │   │   ├── driver/
+│   │   │   │   │   ├── rider/
+│   │   │   │   │   ├── trip/
+│   │   │   │   │   ├── pricing/
+│   │   │   │   │   ├── payment/
+│   │   │   │   │   ├── notification/
+│   │   │   │   │   ├── location/
+│   │   │   │   │   ├── analytics/
+│   │   │   │   │   ├── matching/
+│   │   │   │   │   │
+│   │   │   │   │   ├── api/
+│   │   │   │   │   │   ├── controller/
+│   │   │   │   │   │   ├── gateway/
+│   │   │   │   │   │   └── interceptor/
+│   │   │   │   │   │
+│   │   │   │   │   ├── kafka/
+│   │   │   │   │   │   ├── producer/
+│   │   │   │   │   │   ├── consumer/
+│   │   │   │   │   │   └── topics/
+│   │   │   │   │   │
+│   │   │   │   │   ├── websocket/
+│   │   │   │   │   ├── scheduler/
+│   │   │   │   │   ├── validator/
+│   │   │   │   │   └── RideSphereApplication.java
+│   │   │   │   │
+│   │   │   │   └── resources/
+│   │   │   │       ├── application.yml
+│   │   │   │       ├── application-dev.yml
+│   │   │   │       ├── application-prod.yml
+│   │   │   │       └── db/migration/
+│   │   │   │
+│   │   │   └── test/
+│   │   │       ├── unit/
+│   │   │       ├── integration/
+│   │   │       └── e2e/
+│   │   │
+│   │   ├── Dockerfile
+│   │   ├── pom.xml
+│   │   └── README.md
+│   │
+│   └── microservices/   (PHASE 2 AFTER MONOLITH)
+│       ├── auth-service/
+│       ├── user-service/
+│       ├── driver-service/
+│       ├── trip-service/
+│       ├── payment-service/
+│       ├── notification-service/
+│       └── matching-service/
+│
+├── frontend/
+│   │
+│   ├── apps/
+│   │   ├── rider-web/
+│   │   ├── driver-web/
+│   │   └── admin-web/
+│   │
+│   ├── shared/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── utils/
+│   │   ├── services/
+│   │   ├── types/
+│   │   └── constants/
+│   │
+│   ├── rider-web/
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── features/
+│   │   ├── pages/
+│   │   ├── store/
+│   │   ├── lib/
+│   │   ├── styles/
+│   │   ├── hooks/
+│   │   └── tests/
+│   │
+│   ├── driver-web/
+│   ├── admin-web/
+│   │
+│   ├── next.config.js
+│   ├── package.json
+│   └── README.md
+│
+├── database/
+│   ├── postgresql/
+│   │   ├── init.sql
+│   │   ├── schema/
+│   │   │   ├── users.sql
+│   │   │   ├── drivers.sql
+│   │   │   ├── trips.sql
+│   │   │   ├── payments.sql
+│   │   │   └── ratings.sql
+│   │   └── indexes.sql
+│   │
+│   ├── redis/
+│   │   ├── cache-strategy.md
+│   │   └── keys-design.md
+│   │
+│   └── kafka/
+│       ├── topics.md
+│       └── event-contracts.md
+│
+├── infrastructure/
+│   ├── docker/
+│   │   ├── backend.Dockerfile
+│   │   ├── frontend.Dockerfile
+│   │   └── nginx.conf
+│   │
+│   ├── kubernetes/
+│   │   ├── namespaces/
+│   │   ├── deployments/
+│   │   ├── services/
+│   │   ├── ingress/
+│   │   ├── configmaps/
+│   │   ├── secrets/
+│   │   └── hpa/
+│   │
+│   ├── terraform/
+│   │   ├── aws/
+│   │   ├── networking/
+│   │   ├── rds/
+│   │   ├── eks/
+│   │   └── monitoring/
+│   │
+│   └── monitoring/
+│       ├── prometheus/
+│       ├── grafana/
+│       ├── alerting/
+│       └── dashboards/
+│
+├── devops/
+│   ├── github-actions/
+│   │   ├── build.yml
+│   │   ├── test.yml
+│   │   ├── deploy.yml
+│   │   └── security-scan.yml
+│   │
+│   ├── scripts/
+│   │   ├── setup.sh
+│   │   ├── deploy.sh
+│   │   ├── rollback.sh
+│   │   └── seed-db.sh
+│   │
+│   └── observability/
+│       ├── logging-stack.yml
+│       └── tracing-config.yml
+│
+├── tests/
+│   ├── load-tests/
+│   │   └── k6-scripts/
+│   ├── integration-tests/
+│   └── e2e-tests/
+│
+└── scripts/
+    ├── init-project.sh
+    ├── db-reset.sh
+    └── generate-mocks.sh
