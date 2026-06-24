@@ -1,4 +1,4 @@
-RideSphere/
+urban_ride/
 │
 ├── README.md
 ├── .gitignore
@@ -38,10 +38,10 @@ RideSphere/
 │
 ├── backend/
 │   │
-│   ├── ridesphere-backend/   (MODULAR MONOLITH FIRST)
+│   ├── urban_ride-backend/   (MODULAR MONOLITH FIRST)
 │   │   ├── src/
 │   │   │   ├── main/
-│   │   │   │   ├── java/com/ridesphere/
+│   │   │   │   ├── java/com/urban_ride/
 │   │   │   │   │
 │   │   │   │   │   ├── config/
 │   │   │   │   │   ├── common/
@@ -82,7 +82,7 @@ RideSphere/
 │   │   │   │   │   ├── websocket/
 │   │   │   │   │   ├── scheduler/
 │   │   │   │   │   ├── validator/
-│   │   │   │   │   └── RideSphereApplication.java
+│   │   │   │   │   └── urban_rideApplication.java
 │   │   │   │   │
 │   │   │   │   └── resources/
 │   │   │   │       ├── application.yml
