@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/urban_ride
+    username: urban_admin
+    password: admin_password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

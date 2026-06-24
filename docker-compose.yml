@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: urban-ride-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: urban_ride
+      POSTGRES_USER: urban_admin
+      POSTGRES_PASSWORD: admin_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - urban-ride-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: urban-ride-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - urban-ride-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: urban-ride-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - urban-ride-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: urban-ride-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - urban-ride-network
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  urban-ride-network:
+    driver: bridge
