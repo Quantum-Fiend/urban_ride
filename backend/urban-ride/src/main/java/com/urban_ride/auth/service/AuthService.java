@@ -1,8 +1,10 @@
 package com.urban_ride.auth.service;
 
-import org.springframework.stereotype.Service;
+import com.urban_ride.auth.dto.LoginRequest;
+import com.urban_ride.auth.dto.RegisterRequest;
+import com.urban_ride.auth.dto.AuthResponse;
 
-@Service
-public class AuthService {
-    // Authentication business logic
+public interface AuthService {
+    AuthResponse register(RegisterRequest request);
+    AuthResponse login(LoginRequest request);
 }
