@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "autocomplete": {
+          "tokenizer": "autocomplete_tokenizer",
+          "filter": ["lowercase"]
+        }
+      },
+      "tokenizer": {
+        "autocomplete_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10,
+          "token_chars": ["letter", "digit"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": { "type": "long" },
+      "riderId": { "type": "long" },
+      "driverId": { "type": "long" },
+      "status": { "type": "keyword" },
+      "pickupLocation": { "type": "geo_point" },
+      "dropoffLocation": { "type": "geo_point" },
+      "requestedAt": { "type": "date" }
+    }
+  }
+}

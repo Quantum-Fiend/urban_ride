@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urban-ride-backend
+  namespace: urban-ride
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: urban-ride-backend
+  template:
+    metadata:
+      labels:
+        app: urban-ride-backend
+    spec:
+      containers:
+      - name: backend
+        image: urban-ride-backend:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: urban-ride-config
+        - secretRef:
+            name: urban-ride-secrets

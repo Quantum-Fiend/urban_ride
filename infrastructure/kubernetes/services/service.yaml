@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: urban-ride-backend-service
+  namespace: urban-ride
+spec:
+  selector:
+    app: urban-ride-backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: urban-ride-config
+  namespace: urban-ride
+data:
+  DB_HOST: "postgres-service.urban-ride.svc.cluster.local"
+  REDIS_HOST: "redis-service.urban-ride.svc.cluster.local"
+  KAFKA_SERVERS: "kafka-service.urban-ride.svc.cluster.local:9092"
