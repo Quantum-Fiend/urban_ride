@@ -1,5 +1,7 @@
 package com.urban_ride.model;
 
-public class Role {
-	
+public enum Role {
+    RIDER,
+    DRIVER,
+    ADMIN
 }
