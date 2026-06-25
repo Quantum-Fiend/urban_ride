@@ -1,5 +1,4 @@
 package com.urban_ride.auth.dto;
 
 public class AuthResponse {
-	private String token;
 }
