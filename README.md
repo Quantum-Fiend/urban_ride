@@ -204,11 +204,4 @@ jobs:
           exit-code: '1'
 ```
 
----
-
-## 📄 License
-This project is licensed under the **MIT License** – see the `LICENSE` file for details.
-
----
-
 *Designed for developers, DevOps engineers, and architects who want a battle‑tested, production‑ready foundation for a ride‑hailing service.*
