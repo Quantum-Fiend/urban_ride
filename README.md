@@ -74,7 +74,7 @@ urban_ride/
 
 ### 1️⃣ Clone & Navigate
 ```bash
-git clone <repo-url>
+git clone https://github.com/Quantum-Fiend/urban_ride
 cd urban_ride/backend/urban-ride
 ```
 
