@@ -1,4 +1,4 @@
-package com.urban_ride.model;
+package com.urban_ride.auth.model;
 
 public enum Role {
     RIDER,

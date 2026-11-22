@@ -1,7 +1,22 @@
 package com.urban_ride.common.events;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface DomainEvent {
-    LocalDateTime getOccurredOn();
+import java.time.Instant;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DomainEvent<T> {
+    @Builder.Default
+    private String eventId = UUID.randomUUID().toString();
+    private String eventType;
+    @Builder.Default
+    private Instant timestamp = Instant.now();
+    private T payload;
 }

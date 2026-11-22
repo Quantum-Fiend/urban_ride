@@ -1,0 +1,357 @@
+openapi: 3.0.3
+info:
+  title: Urban Ride (RideSphere) Enterprise API
+  description: High-throughput, distributed mobility and intelligent ride-hailing backend API.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local Development Environment
+  - url: https://api.ridesphere.io/api/v1
+    description: Production Cluster
+tags:
+  - name: Authentication
+    description: Identity, Registration & Token Lifecycle
+  - name: Riders
+    description: Rider profile and preferences
+  - name: Drivers
+    description: Driver telemetry, cockpit controls, and earnings
+  - name: Trips
+    description: Dynamic fare estimates and trip lifecycle management
+  - name: Payments
+    description: Multi-modal billing, digital wallet, and transaction ledger
+  - name: Analytics
+    description: Enterprise KPI metrics and operational heatmaps
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new rider or driver
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error or account conflict
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Authenticate user and receive JWT tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid email or password
+
+  /trips/estimate:
+    post:
+      tags: [Trips]
+      summary: Calculate dynamic fare estimates and surge across tiers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripEstimateRequest'
+      responses:
+        '200':
+          description: List of estimated tiers with fares and ETAs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripEstimateResponse'
+
+  /trips/request:
+    post:
+      tags: [Trips]
+      summary: Book a new trip and start driver dispatch
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripCreateRequest'
+      responses:
+        '201':
+          description: Trip created and dispatch initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDto'
+
+  /trips/{id}:
+    get:
+      tags: [Trips]
+      summary: Get trip status by ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDto'
+
+  /trips/{id}/accept:
+    post:
+      tags: [Trips]
+      summary: Driver accepts a dispatched trip offer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDto'
+
+  /trips/{id}/start:
+    post:
+      tags: [Trips]
+      summary: Driver starts the trip using rider 4-digit OTP
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: string
+                  example: "4921"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDto'
+
+  /trips/{id}/complete:
+    post:
+      tags: [Trips]
+      summary: Driver completes the trip at dropoff location
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripDto'
+
+  /drivers/location:
+    post:
+      tags: [Drivers]
+      summary: Broadcast driver GPS coordinates
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdateDto'
+      responses:
+        '200':
+          description: Location updated successfully
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [email, password, firstName, lastName, phoneNumber, role]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum: [RIDER, DRIVER, ADMIN]
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        tokenType:
+          type: string
+          example: Bearer
+        userId:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+
+    TripEstimateRequest:
+      type: object
+      required: [pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude]
+      properties:
+        pickupLatitude:
+          type: number
+        pickupLongitude:
+          type: number
+        dropoffLatitude:
+          type: number
+        dropoffLongitude:
+          type: number
+
+    TripEstimateResponse:
+      type: object
+      properties:
+        distanceKm:
+          type: number
+        durationMinutes:
+          type: integer
+        tiers:
+          type: array
+          items:
+            type: object
+            properties:
+              tier:
+                type: string
+                example: ECONOMY
+              tierName:
+                type: string
+                example: Urban Economy
+              fare:
+                type: number
+                example: 18.50
+              surgeMultiplier:
+                type: number
+                example: 1.2
+              etaMinutes:
+                type: integer
+                example: 4
+
+    TripCreateRequest:
+      type: object
+      required: [pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude, tier, paymentMethod]
+      properties:
+        pickupLatitude:
+          type: number
+        pickupLongitude:
+          type: number
+        dropoffLatitude:
+          type: number
+        dropoffLongitude:
+          type: number
+        pickupAddress:
+          type: string
+        dropoffAddress:
+          type: string
+        tier:
+          type: string
+          enum: [ECONOMY, COMFORT, XL, BLACK, EV]
+        paymentMethod:
+          type: string
+          enum: [CREDIT_CARD, WALLET, UPI, CASH]
+
+    TripDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        riderId:
+          type: integer
+        driverId:
+          type: integer
+        status:
+          type: string
+          enum: [REQUESTED, MATCHING, ACCEPTED, ARRIVED, IN_PROGRESS, COMPLETED, CANCELLED]
+        fare:
+          type: number
+        surgeMultiplier:
+          type: number
+        distanceKm:
+          type: number
+        otp:
+          type: string
+
+    LocationUpdateDto:
+      type: object
+      required: [latitude, longitude]
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+        heading:
+          type: number
+        speed:
+          type: number

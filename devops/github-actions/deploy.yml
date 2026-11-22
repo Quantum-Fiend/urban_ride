@@ -1,0 +1,29 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    name: Production Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy Kubernetes Manifests
+        run: |
+          aws eks update-kubeconfig --name ridesphere-cluster --region us-east-1
+          kubectl apply -f infrastructure/kubernetes/namespaces/
+          kubectl apply -f infrastructure/kubernetes/deployments/
+          kubectl apply -f infrastructure/kubernetes/services/
+          kubectl rollout status deployment/ridesphere-backend -n ridesphere

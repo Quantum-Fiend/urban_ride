@@ -1,19 +1,41 @@
-.PHONY: build test clean docker-up docker-down db-init
+.PHONY: help build test clean docker-up docker-down db-init run-backend run-frontend dev
 
-MVN=mvn
-DOCKER_COMPOSE=docker compose
+MVN ?= ./mvnw
+DOCKER_COMPOSE ?= docker compose
+
+help:
+	@echo "Urban Ride (RideSphere) Enterprise Engineering Commands:"
+	@echo "  make build         - Package Spring Boot backend JAR"
+	@echo "  make test          - Run backend unit and integration tests"
+	@echo "  make clean         - Clean Maven targets and build artifacts"
+	@echo "  make docker-up     - Start PostgreSQL, Redis, Kafka, and containers"
+	@echo "  make docker-down   - Terminate all Docker Compose containers"
+	@echo "  make db-init       - Initialize and seed PostgreSQL database schema"
+	@echo "  make run-backend   - Run Spring Boot backend locally"
+	@echo "  make run-frontend  - Run Next.js 15 frontend in dev mode"
 
 build:
-	[INFO] Scanning for projects... [INFO] ------------------------------------------------------------------------ [INFO] BUILD FAILURE [INFO] ------------------------------------------------------------------------ [INFO] Total time:  0.161 s [INFO] Finished at: 2026-06-24T15:48:00+05:30 [INFO] ------------------------------------------------------------------------ [ERROR] No goals have been specified for this build. You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy, pre-site, site, post-site, site-deploy. -> [Help 1] [ERROR]  [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch. [ERROR] Re-run Maven using the -X switch to enable full debug logging. [ERROR]  [ERROR] For more information about the errors and possible solutions, please read the following articles: [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoGoalSpecifiedException -f backend/urban-ride/pom.xml clean package -DskipTests
+	cd backend/urban-ride && $(MVN) clean package -DskipTests
 
 test:
-	[INFO] Scanning for projects... [INFO] ------------------------------------------------------------------------ [INFO] BUILD FAILURE [INFO] ------------------------------------------------------------------------ [INFO] Total time:  0.150 s [INFO] Finished at: 2026-06-24T15:48:03+05:30 [INFO] ------------------------------------------------------------------------ [ERROR] No goals have been specified for this build. You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy, pre-site, site, post-site, site-deploy. -> [Help 1] [ERROR]  [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch. [ERROR] Re-run Maven using the -X switch to enable full debug logging. [ERROR]  [ERROR] For more information about the errors and possible solutions, please read the following articles: [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoGoalSpecifiedException -f backend/urban-ride/pom.xml test
+	cd backend/urban-ride && $(MVN) test
 
 clean:
-	[INFO] Scanning for projects... [INFO] ------------------------------------------------------------------------ [INFO] BUILD FAILURE [INFO] ------------------------------------------------------------------------ [INFO] Total time:  0.186 s [INFO] Finished at: 2026-06-24T15:48:06+05:30 [INFO] ------------------------------------------------------------------------ [ERROR] No goals have been specified for this build. You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy, pre-site, site, post-site, site-deploy. -> [Help 1] [ERROR]  [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch. [ERROR] Re-run Maven using the -X switch to enable full debug logging. [ERROR]  [ERROR] For more information about the errors and possible solutions, please read the following articles: [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/NoGoalSpecifiedException -f backend/urban-ride/pom.xml clean
+	cd backend/urban-ride && $(MVN) clean
 
 docker-up:
-	 up -d
+	$(DOCKER_COMPOSE) up -d
 
 docker-down:
-	 down
+	$(DOCKER_COMPOSE) down
+
+db-init:
+	$(DOCKER_COMPOSE) up -d postgres
+	sleep 3
+	$(DOCKER_COMPOSE) exec -T postgres psql -U urban_admin -d urban_ride < database/postgresql/init.sql
+
+run-backend:
+	cd backend/urban-ride && $(MVN) spring-boot:run
+
+run-frontend:
+	cd frontend && npm run dev
